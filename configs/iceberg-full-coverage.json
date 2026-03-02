@@ -1,0 +1,99 @@
+{
+  "name": "iceberg_full_coverage",
+  "numRows": 100000,
+  "seed": 42,
+  "defaultNullRatio": 0.1,
+  "columns": [
+    {
+      "name": "iceberg_int",
+      "physicalType": "INT32",
+      "logicalType": "INT32",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_long",
+      "physicalType": "INT64",
+      "logicalType": "INT64",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_float",
+      "physicalType": "FLOAT",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_double",
+      "physicalType": "DOUBLE",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_date",
+      "physicalType": "INT32",
+      "logicalType": "DATE",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_time",
+      "physicalType": "INT64",
+      "logicalType": "TIME_MICROS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_timestamp",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MICROS",
+      "logicalTypeParams": { "is_adjusted_to_utc": false },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_timestamptz",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MICROS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_string",
+      "physicalType": "BINARY",
+      "logicalType": "STRING",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_binary",
+      "physicalType": "BINARY",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_fixed_8",
+      "physicalType": "FIXED_LEN_BYTE_ARRAY",
+      "fixedLength": 8,
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "iceberg_required_string",
+      "physicalType": "BINARY",
+      "logicalType": "STRING",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "iceberg_required_int",
+      "physicalType": "INT32",
+      "logicalType": "INT32",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "ingestion_timestamp",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MILLIS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "REQUIRED"
+    }
+  ],
+  "writerOptions": {
+    "compression": "SNAPPY",
+    "useDictionary": true,
+    "writeStatistics": true,
+    "useDeprecatedInt96Timestamps": false
+  }
+}

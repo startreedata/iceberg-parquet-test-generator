@@ -1,0 +1,186 @@
+{
+  "name": "all_logical_types",
+  "numRows": 100000,
+  "seed": 42,
+  "defaultNullRatio": 0.1,
+  "columns": [
+    {
+      "name": "col_int8",
+      "physicalType": "INT32",
+      "logicalType": "INT8",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_int16",
+      "physicalType": "INT32",
+      "logicalType": "INT16",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_int32_logical",
+      "physicalType": "INT32",
+      "logicalType": "INT32",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_int64_logical",
+      "physicalType": "INT64",
+      "logicalType": "INT64",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_uint8",
+      "physicalType": "INT32",
+      "logicalType": "UINT8",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_uint16",
+      "physicalType": "INT32",
+      "logicalType": "UINT16",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_uint32",
+      "physicalType": "INT32",
+      "logicalType": "UINT32",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_uint64",
+      "physicalType": "INT64",
+      "logicalType": "UINT64",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_string",
+      "physicalType": "BINARY",
+      "logicalType": "STRING",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_enum",
+      "physicalType": "BINARY",
+      "logicalType": "ENUM",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_json",
+      "physicalType": "BINARY",
+      "logicalType": "JSON",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_bson",
+      "physicalType": "BINARY",
+      "logicalType": "BSON",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_uuid",
+      "physicalType": "FIXED_LEN_BYTE_ARRAY",
+      "logicalType": "UUID",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_date",
+      "physicalType": "INT32",
+      "logicalType": "DATE",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_time_millis",
+      "physicalType": "INT32",
+      "logicalType": "TIME_MILLIS",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_time_micros",
+      "physicalType": "INT64",
+      "logicalType": "TIME_MICROS",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_time_nanos",
+      "physicalType": "INT64",
+      "logicalType": "TIME_NANOS",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_timestamp_millis_utc",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MILLIS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_timestamp_millis_local",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MILLIS",
+      "logicalTypeParams": { "is_adjusted_to_utc": false },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_timestamp_micros_utc",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MICROS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_timestamp_micros_local",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MICROS",
+      "logicalTypeParams": { "is_adjusted_to_utc": false },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_timestamp_nanos_utc",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_NANOS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_timestamp_nanos_local",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_NANOS",
+      "logicalTypeParams": { "is_adjusted_to_utc": false },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_decimal_int32",
+      "physicalType": "INT32",
+      "logicalType": "DECIMAL",
+      "logicalTypeParams": { "precision": 9, "scale": 2 },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_decimal_int64",
+      "physicalType": "INT64",
+      "logicalType": "DECIMAL",
+      "logicalTypeParams": { "precision": 18, "scale": 4 },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_decimal_fixed",
+      "physicalType": "FIXED_LEN_BYTE_ARRAY",
+      "logicalType": "DECIMAL",
+      "logicalTypeParams": { "precision": 28, "scale": 6 },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_decimal_binary",
+      "physicalType": "BINARY",
+      "logicalType": "DECIMAL",
+      "logicalTypeParams": { "precision": 38, "scale": 10 },
+      "repetition": "OPTIONAL"
+    }
+  ],
+  "writerOptions": {
+    "compression": "SNAPPY",
+    "useDictionary": true,
+    "writeStatistics": true,
+    "useDeprecatedInt96Timestamps": false
+  }
+}

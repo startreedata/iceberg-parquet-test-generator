@@ -1,0 +1,15 @@
+---
+description: Coding conventions for the generator Python codebase
+globs: generator/**/*.py
+alwaysApply: false
+---
+
+# Generator Coding Conventions
+
+- Use `from __future__ import annotations` in every module for modern type hints
+- Pydantic v2 models with `model_config = {"populate_by_name": True}` for camelCase JSON + snake_case Python
+- All random generation must accept a `random.Random` instance (seeded) -- never use `random.random()` at module level
+- PyArrow types are built in `schema_builder.py`, data in `data_generator.py` -- keep these concerns separate
+- Complex types (LIST, MAP, STRUCT) generate recursively; scalar types dispatch through `_pick_scalar_generator`
+- Null injection: REQUIRED columns never get nulls; OPTIONAL columns use `nullRatio` or `defaultNullRatio`
+- `fixedValues` on a column overrides random generation (used for sentinel-collision testing)

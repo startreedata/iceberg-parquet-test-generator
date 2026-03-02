@@ -1,0 +1,57 @@
+{
+  "name": "all_complex_types",
+  "numRows": 100000,
+  "seed": 42,
+  "defaultNullRatio": 0.0,
+  "columns": [
+    {
+      "name": "flat_struct",
+      "physicalType": "STRUCT",
+      "fields": [
+        { "name": "name", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+        { "name": "age", "physicalType": "INT32", "repetition": "REQUIRED" },
+        { "name": "score", "physicalType": "DOUBLE", "repetition": "REQUIRED" }
+      ],
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "string_list",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "int_list",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "INT32", "repetition": "REQUIRED" },
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "map_string_int",
+      "physicalType": "MAP",
+      "key": { "name": "key", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+      "value": { "name": "value", "physicalType": "INT32", "repetition": "REQUIRED" },
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "map_string_string",
+      "physicalType": "MAP",
+      "key": { "name": "key", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+      "value": { "name": "value", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "ingestion_timestamp",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MILLIS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "REQUIRED"
+    }
+  ],
+  "writerOptions": {
+    "compression": "SNAPPY",
+    "useDictionary": true,
+    "writeStatistics": true,
+    "useDeprecatedInt96Timestamps": false
+  }
+}

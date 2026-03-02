@@ -1,0 +1,92 @@
+{
+  "name": "all_primitive_types",
+  "numRows": 100000,
+  "seed": 42,
+  "defaultNullRatio": 0.1,
+  "columns": [
+    {
+      "name": "col_boolean",
+      "physicalType": "BOOLEAN",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_int32",
+      "physicalType": "INT32",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_int64",
+      "physicalType": "INT64",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_float",
+      "physicalType": "FLOAT",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_double",
+      "physicalType": "DOUBLE",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_binary",
+      "physicalType": "BINARY",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_fixed_len",
+      "physicalType": "FIXED_LEN_BYTE_ARRAY",
+      "fixedLength": 20,
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_int96",
+      "physicalType": "INT96",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_boolean_required",
+      "physicalType": "BOOLEAN",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "col_int32_required",
+      "physicalType": "INT32",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "col_int64_required",
+      "physicalType": "INT64",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "col_float_required",
+      "physicalType": "FLOAT",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "col_double_required",
+      "physicalType": "DOUBLE",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "col_binary_required",
+      "physicalType": "BINARY",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "ingestion_timestamp",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MILLIS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "REQUIRED"
+    }
+  ],
+  "writerOptions": {
+    "compression": "SNAPPY",
+    "useDictionary": true,
+    "writeStatistics": true,
+    "useDeprecatedInt96Timestamps": false
+  }
+}

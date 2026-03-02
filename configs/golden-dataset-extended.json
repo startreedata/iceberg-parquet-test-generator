@@ -1,0 +1,213 @@
+{
+  "name": "golden_dataset_extended",
+  "numRows": 1000,
+  "seed": 42,
+  "defaultNullRatio": 0.1,
+  "columns": [
+    {
+      "name": "id",
+      "physicalType": "INT32",
+      "logicalType": "INT32",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "bool_col",
+      "physicalType": "BOOLEAN",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "int_col",
+      "physicalType": "INT32",
+      "logicalType": "INT32",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "long_col",
+      "physicalType": "INT64",
+      "logicalType": "INT64",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "float_col",
+      "physicalType": "FLOAT",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "double_col",
+      "physicalType": "DOUBLE",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "string_col",
+      "physicalType": "BINARY",
+      "logicalType": "STRING",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "bytes_col",
+      "physicalType": "BINARY",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "date_col",
+      "physicalType": "INT32",
+      "logicalType": "DATE",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "timestamp_millis_col",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MILLIS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "timestamp_micros_col",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MICROS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "time_millis_col",
+      "physicalType": "INT32",
+      "logicalType": "TIME_MILLIS",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "time_micros_col",
+      "physicalType": "INT64",
+      "logicalType": "TIME_MICROS",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "decimal_small_col",
+      "physicalType": "INT32",
+      "logicalType": "DECIMAL",
+      "logicalTypeParams": { "precision": 9, "scale": 2 },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "decimal_medium_col",
+      "physicalType": "INT64",
+      "logicalType": "DECIMAL",
+      "logicalTypeParams": { "precision": 18, "scale": 4 },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "decimal_large_col",
+      "physicalType": "FIXED_LEN_BYTE_ARRAY",
+      "logicalType": "DECIMAL",
+      "logicalTypeParams": { "precision": 38, "scale": 10 },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "json_col",
+      "physicalType": "BINARY",
+      "logicalType": "JSON",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "uuid_col",
+      "physicalType": "FIXED_LEN_BYTE_ARRAY",
+      "logicalType": "UUID",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "int8_col",
+      "physicalType": "INT32",
+      "logicalType": "INT8",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "int16_col",
+      "physicalType": "INT32",
+      "logicalType": "INT16",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "uint8_col",
+      "physicalType": "INT32",
+      "logicalType": "UINT8",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "uint16_col",
+      "physicalType": "INT32",
+      "logicalType": "UINT16",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "uint32_col",
+      "physicalType": "INT32",
+      "logicalType": "UINT32",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "uint64_col",
+      "physicalType": "INT64",
+      "logicalType": "UINT64",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "string_list_col",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "int_list_col",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "INT32", "logicalType": "INT32", "repetition": "OPTIONAL" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "string_map_col",
+      "physicalType": "MAP",
+      "key": { "name": "key", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+      "value": { "name": "value", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "int_map_col",
+      "physicalType": "MAP",
+      "key": { "name": "key", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+      "value": { "name": "value", "physicalType": "INT32", "logicalType": "INT32", "repetition": "OPTIONAL" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "struct_col",
+      "physicalType": "STRUCT",
+      "fields": [
+        { "name": "name", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+        { "name": "age", "physicalType": "INT32", "logicalType": "INT32", "repetition": "OPTIONAL" },
+        { "name": "active", "physicalType": "BOOLEAN", "repetition": "OPTIONAL" }
+      ],
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "int96_ts_col",
+      "physicalType": "INT96",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "timestamp_local_col",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MICROS",
+      "logicalTypeParams": { "is_adjusted_to_utc": false },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "enum_col",
+      "physicalType": "BINARY",
+      "logicalType": "ENUM",
+      "repetition": "OPTIONAL"
+    }
+  ],
+  "writerOptions": {
+    "compression": "SNAPPY",
+    "useDictionary": true,
+    "writeStatistics": true,
+    "useDeprecatedInt96Timestamps": true
+  }
+}

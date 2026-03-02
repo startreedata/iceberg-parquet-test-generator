@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "iceberg-parquet-test-generator"
+version = "0.1.0"
+description = "JSON-config-driven Parquet dataset generator for Iceberg/Pinot data type validation"
+requires-python = ">=3.9"
+dependencies = [
+    "pyarrow>=14.0.0",
+    "pydantic>=2.0.0",
+    "numpy>=1.24.0",
+]
+
+[project.scripts]
+parquet-gen = "generator.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["generator*"]

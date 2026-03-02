@@ -1,0 +1,45 @@
+---
+description: Project context and background for the Iceberg Parquet Test Generator
+alwaysApply: true
+---
+
+# Iceberg Parquet Test Generator -- Project Context
+
+## Purpose
+
+This project is an internal tool for **Phase 1 functional testing** of Parquet ingestion in StarTree Pinot. It generates Parquet datasets to validate that every Parquet data type round-trips correctly through the Parquet -> Pinot ingestion pipeline. The primary target is **raw S3 catalog table type** (Parquet files in S3 without Iceberg catalog metadata), using `ParquetToPinotTypeMapper` as the type mapping path. An `iceberg` mapping mode is also available for testing the full Iceberg pipeline.
+
+## Parent Repository
+
+The StarTree Pinot codebase lives at `~/Documents/GitHub/startree-pinot`. Key files referenced during design:
+
+- `ParquetToPinotTypeMapper.java` -- maps Parquet physical/logical types to Pinot FieldSpec.DataType
+- `IcebergSchemaConverter.java` -- converts Iceberg schema JSON to Pinot Schema
+- `GenericRowRecordMaterializer.java` -- handles sentinel null values during Parquet ingestion
+- `ParquetAllTypesIntegrationTest.java` -- existing Java integration test for Parquet types
+
+## Architecture
+
+- **Language:** Python 3.9+ with PyArrow and Pydantic
+- **Config-driven:** JSON configs in `configs/` specify Parquet-native types (physical + logical), NOT Pinot types
+- **No unit tests:** This is a manual validation tool; generate files, then inspect with PyArrow or ingest into Pinot
+
+## Key Design Decisions
+
+1. Configs use **Parquet-native types** (physicalType: INT32, logicalType: DATE) not Pinot types (dataType: LONG)
+2. Complex types (STRUCT, LIST, MAP) support arbitrary nesting
+3. Null injection uses per-column `nullRatio` with `REQUIRED` columns getting zero nulls
+4. `fixedValues` field enables sentinel-collision testing (e.g., INT32 column with Integer.MIN_VALUE as actual data)
+5. Seeded random for reproducible output
+
+## CLI Usage
+
+```bash
+python -m generator.cli --config configs/all-primitive-types.json --output output/
+python -m generator.cli --config configs/iceberg-full-coverage.json --output output/ --num-rows 5000 --seed 123
+```
+
+## Documentation
+
+- `docs/parquet-data-types.md` -- Complete type taxonomy: 8 physical types, all logical types, complex types, Parquet->Iceberg->Pinot mapping table
+- `docs/null-handling.md` -- Parquet definition levels, Pinot sentinel vs bitmap nulls, 8 test scenarios

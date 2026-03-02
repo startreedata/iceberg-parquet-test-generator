@@ -1,0 +1,118 @@
+{
+  "name": "null_scenarios",
+  "numRows": 100000,
+  "seed": 42,
+  "defaultNullRatio": 0.0,
+  "columns": [
+    {
+      "name": "scenario1_optional_int",
+      "physicalType": "INT32",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.15
+    },
+    {
+      "name": "scenario1_optional_long",
+      "physicalType": "INT64",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.15
+    },
+    {
+      "name": "scenario1_optional_float",
+      "physicalType": "FLOAT",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.15
+    },
+    {
+      "name": "scenario1_optional_double",
+      "physicalType": "DOUBLE",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.15
+    },
+    {
+      "name": "scenario1_optional_string",
+      "physicalType": "BINARY",
+      "logicalType": "STRING",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.15
+    },
+    {
+      "name": "scenario2_required_int",
+      "physicalType": "INT32",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "scenario2_required_long",
+      "physicalType": "INT64",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "scenario2_required_string",
+      "physicalType": "BINARY",
+      "logicalType": "STRING",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "scenario3_sentinel_int",
+      "physicalType": "INT32",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.2,
+      "fixedValues": [-2147483648, 0, 1, 42, -2147483648, 100, -2147483648]
+    },
+    {
+      "name": "scenario3_sentinel_long",
+      "physicalType": "INT64",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.2,
+      "fixedValues": [-9223372036854775808, 0, 1, 42, -9223372036854775808]
+    },
+    {
+      "name": "scenario3_sentinel_string",
+      "physicalType": "BINARY",
+      "logicalType": "STRING",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.2,
+      "fixedValues": ["null", "hello", "null", "world", "null", "test"]
+    },
+    {
+      "name": "scenario7_optional_date",
+      "physicalType": "INT32",
+      "logicalType": "DATE",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.25
+    },
+    {
+      "name": "scenario7_optional_timestamp",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MICROS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.25
+    },
+    {
+      "name": "scenario8_required_iceberg_string",
+      "physicalType": "BINARY",
+      "logicalType": "STRING",
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "scenario8_optional_iceberg_string",
+      "physicalType": "BINARY",
+      "logicalType": "STRING",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.5
+    },
+    {
+      "name": "ingestion_timestamp",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MILLIS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "REQUIRED"
+    }
+  ],
+  "writerOptions": {
+    "compression": "SNAPPY",
+    "useDictionary": true,
+    "writeStatistics": true,
+    "useDeprecatedInt96Timestamps": false
+  }
+}
