@@ -175,6 +175,13 @@
       "logicalType": "DECIMAL",
       "logicalTypeParams": { "precision": 38, "scale": 10 },
       "repetition": "OPTIONAL"
+    },
+    {
+      "name": "ingestion_timestamp",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MILLIS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "REQUIRED"
     }
   ],
   "writerOptions": {

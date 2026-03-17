@@ -29,6 +29,12 @@
       "nullRatio": 0.15
     },
     {
+      "name": "scenario1_optional_bool",
+      "physicalType": "BOOLEAN",
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.15
+    },
+    {
       "name": "scenario1_optional_string",
       "physicalType": "BINARY",
       "logicalType": "STRING",
@@ -72,6 +78,31 @@
       "repetition": "OPTIONAL",
       "nullRatio": 0.2,
       "fixedValues": ["null", "hello", "null", "world", "null", "test"]
+    },
+    {
+      "name": "scenario4_nullable_list",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.2
+    },
+    {
+      "name": "scenario5_nullable_map",
+      "physicalType": "MAP",
+      "key": { "name": "key", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+      "value": { "name": "value", "physicalType": "INT32", "repetition": "OPTIONAL", "nullRatio": 0.3 },
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.2
+    },
+    {
+      "name": "scenario6_nullable_struct",
+      "physicalType": "STRUCT",
+      "fields": [
+        { "name": "name", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL", "nullRatio": 0.3 },
+        { "name": "age", "physicalType": "INT32", "repetition": "OPTIONAL", "nullRatio": 0.3 }
+      ],
+      "repetition": "OPTIONAL",
+      "nullRatio": 0.2
     },
     {
       "name": "scenario7_optional_date",

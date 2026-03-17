@@ -2,43 +2,119 @@
   "name": "all_complex_types",
   "numRows": 100000,
   "seed": 42,
-  "defaultNullRatio": 0.0,
+  "defaultNullRatio": 0.1,
   "columns": [
     {
       "name": "flat_struct",
       "physicalType": "STRUCT",
       "fields": [
-        { "name": "name", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
-        { "name": "age", "physicalType": "INT32", "repetition": "REQUIRED" },
-        { "name": "score", "physicalType": "DOUBLE", "repetition": "REQUIRED" }
+        { "name": "name", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+        { "name": "age", "physicalType": "INT32", "repetition": "OPTIONAL" },
+        { "name": "score", "physicalType": "DOUBLE", "repetition": "OPTIONAL" }
       ],
-      "repetition": "REQUIRED"
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "nested_struct",
+      "physicalType": "STRUCT",
+      "fields": [
+        { "name": "id", "physicalType": "INT64", "repetition": "REQUIRED" },
+        {
+          "name": "address",
+          "physicalType": "STRUCT",
+          "fields": [
+            { "name": "street", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+            { "name": "city", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+            { "name": "zip", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" }
+          ],
+          "repetition": "OPTIONAL"
+        }
+      ],
+      "repetition": "OPTIONAL"
     },
     {
       "name": "string_list",
       "physicalType": "LIST",
-      "element": { "name": "element", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
-      "repetition": "REQUIRED"
+      "element": { "name": "element", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+      "repetition": "OPTIONAL"
     },
     {
       "name": "int_list",
       "physicalType": "LIST",
-      "element": { "name": "element", "physicalType": "INT32", "repetition": "REQUIRED" },
-      "repetition": "REQUIRED"
+      "element": { "name": "element", "physicalType": "INT32", "repetition": "OPTIONAL" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "list_of_structs",
+      "physicalType": "LIST",
+      "element": {
+        "name": "element",
+        "physicalType": "STRUCT",
+        "fields": [
+          { "name": "key", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+          { "name": "val", "physicalType": "INT32", "repetition": "OPTIONAL" }
+        ],
+        "repetition": "OPTIONAL"
+      },
+      "repetition": "OPTIONAL"
     },
     {
       "name": "map_string_int",
       "physicalType": "MAP",
       "key": { "name": "key", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
-      "value": { "name": "value", "physicalType": "INT32", "repetition": "REQUIRED" },
-      "repetition": "REQUIRED"
+      "value": { "name": "value", "physicalType": "INT32", "repetition": "OPTIONAL" },
+      "repetition": "OPTIONAL"
     },
     {
       "name": "map_string_string",
       "physicalType": "MAP",
       "key": { "name": "key", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
-      "value": { "name": "value", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
-      "repetition": "REQUIRED"
+      "value": { "name": "value", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "map_string_struct",
+      "physicalType": "MAP",
+      "key": { "name": "key", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+      "value": {
+        "name": "value",
+        "physicalType": "STRUCT",
+        "fields": [
+          { "name": "x", "physicalType": "DOUBLE", "repetition": "REQUIRED" },
+          { "name": "y", "physicalType": "DOUBLE", "repetition": "REQUIRED" }
+        ],
+        "repetition": "OPTIONAL"
+      },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "struct_with_list",
+      "physicalType": "STRUCT",
+      "fields": [
+        { "name": "label", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+        {
+          "name": "tags",
+          "physicalType": "LIST",
+          "element": { "name": "element", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+          "repetition": "OPTIONAL"
+        }
+      ],
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "struct_with_map",
+      "physicalType": "STRUCT",
+      "fields": [
+        { "name": "name", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+        {
+          "name": "attrs",
+          "physicalType": "MAP",
+          "key": { "name": "key", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+          "value": { "name": "value", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "OPTIONAL" },
+          "repetition": "OPTIONAL"
+        }
+      ],
+      "repetition": "OPTIONAL"
     },
     {
       "name": "ingestion_timestamp",
