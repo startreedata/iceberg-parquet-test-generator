@@ -54,6 +54,9 @@ class LogicalType(str, Enum):
     TIMESTAMP_NANOS = "TIMESTAMP_NANOS"
     # Decimal
     DECIMAL = "DECIMAL"
+    # Geospatial (extension types, stored as WKB in BINARY)
+    GEOMETRY = "GEOMETRY"
+    GEOGRAPHY = "GEOGRAPHY"
 
 
 class Repetition(str, Enum):

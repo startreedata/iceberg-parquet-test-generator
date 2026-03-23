@@ -166,6 +166,20 @@ def _gen_uuid(_col: ColumnConfig, rng: random.Random) -> bytes:
     return uuid.UUID(int=rng.getrandbits(128)).bytes
 
 
+def _gen_geometry(_col: ColumnConfig, rng: random.Random) -> bytes:
+    """Generate random WKB-encoded Point geometry."""
+    x = rng.uniform(-180.0, 180.0)
+    y = rng.uniform(-90.0, 90.0)
+    return struct.pack("<BIdd", 1, 1, x, y)
+
+
+def _gen_geography(_col: ColumnConfig, rng: random.Random) -> bytes:
+    """Generate random WKB-encoded Point geography (lon/lat)."""
+    lon = rng.uniform(-180.0, 180.0)
+    lat = rng.uniform(-90.0, 90.0)
+    return struct.pack("<BIdd", 1, 1, lon, lat)
+
+
 def _gen_date(_col: ColumnConfig, rng: random.Random) -> datetime.date:
     # Range: 1970-01-01 to 2030-12-31
     ordinal = rng.randint(
@@ -229,6 +243,8 @@ _LOGICAL_GENERATORS = {
     LogicalType.JSON:             _gen_json,
     LogicalType.BSON:             _gen_bson,
     LogicalType.UUID:             _gen_uuid,
+    LogicalType.GEOMETRY:         _gen_geometry,
+    LogicalType.GEOGRAPHY:        _gen_geography,
     LogicalType.DATE:             _gen_date,
     LogicalType.TIME_MILLIS:      _gen_time_millis,
     LogicalType.TIME_MICROS:      _gen_time_micros,

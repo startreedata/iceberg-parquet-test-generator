@@ -76,6 +76,8 @@ def _resolve_logical_type(
         return pa.binary()
     if lt == LogicalType.UUID:
         return pa.binary(16)
+    if lt in (LogicalType.GEOMETRY, LogicalType.GEOGRAPHY):
+        return pa.binary()
 
     # Temporal
     if lt == LogicalType.DATE:

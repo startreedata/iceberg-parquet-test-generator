@@ -61,6 +61,8 @@ _PARQUET_LOGICAL_MAP: dict[LogicalType, str] = {
     LogicalType.JSON: "STRING",
     LogicalType.BSON: "BYTES",
     LogicalType.UUID: "STRING",
+    LogicalType.GEOMETRY: "STRING",
+    LogicalType.GEOGRAPHY: "STRING",
     LogicalType.DATE: "LONG",
     LogicalType.TIME_MILLIS: "INT",
     LogicalType.TIME_MICROS: "LONG",
@@ -125,6 +127,7 @@ class _FieldKind(str, Enum):
     METRIC = "metric"
     JSON = "json"
     MAP = "map"
+    GEOSPATIAL = "geospatial"
 
 
 def _classify_column(col: ColumnConfig, mode: MappingMode) -> _FieldKind:
@@ -150,6 +153,9 @@ def _classify_column(col: ColumnConfig, mode: MappingMode) -> _FieldKind:
 
     if _is_timestamp_type(col):
         return _FieldKind.DATETIME
+
+    if col.logicalType in (LogicalType.GEOMETRY, LogicalType.GEOGRAPHY):
+        return _FieldKind.GEOSPATIAL
 
     return _FieldKind.DIMENSION_SV
 
@@ -187,6 +193,26 @@ def _build_json_field(col: ColumnConfig) -> dict[str, Any]:
         "name": col.name,
         "dataType": "JSON",
         "singleValueField": True,
+    }
+
+
+def _build_geospatial_field(col: ColumnConfig) -> dict[str, Any]:
+    """Build a BYTES dimension with a transformFunction for geospatial data.
+
+    Pinot stores geospatial objects as serialized BYTES.  During ingestion the
+    WKT string from the Parquet column is converted via ST_GeomFromText (for
+    GEOMETRY) or toSphericalGeography(ST_GeomFromText(...)) (for GEOGRAPHY).
+    """
+    if col.logicalType == LogicalType.GEOGRAPHY:
+        transform = f"ST_GeogFromWKB({col.name})"
+    else:
+        transform = f"ST_GeomFromWKB({col.name})"
+
+    return {
+        "name": col.name,
+        "dataType": "BYTES",
+        "singleValueField": True,
+        "transformFunction": transform,
     }
 
 
@@ -237,6 +263,9 @@ def generate_pinot_schema(config: DatasetConfig, mode: MappingMode = MappingMode
 
         elif kind == _FieldKind.MAP:
             complex_fields.append(_build_map_field(col, mode))
+
+        elif kind == _FieldKind.GEOSPATIAL:
+            dimensions.append(_build_geospatial_field(col))
 
     schema: dict[str, Any] = {
         "schemaName": config.name,
@@ -310,6 +339,24 @@ def generate_pinot_table_config(
         },
     }
 
+    geo_cols = [
+        col.name
+        for col in config.columns
+        if col.logicalType in (LogicalType.GEOMETRY, LogicalType.GEOGRAPHY)
+    ]
+
+    field_config_list = [
+        {
+            "name": name,
+            "encodingType": "RAW",
+            "indexTypes": ["H3"],
+            "properties": {
+                "resolutions": "5",
+            },
+        }
+        for name in geo_cols
+    ]
+
     table_config: dict[str, Any] = {
         "tableName": f"{table_name}_{table_type}",
         "tableType": table_type,
@@ -324,6 +371,9 @@ def generate_pinot_table_config(
             "customConfigs": {},
         },
     }
+
+    if field_config_list:
+        table_config["fieldConfigList"] = field_config_list
 
     return table_config
 
@@ -396,5 +446,7 @@ def _print_mapping_summary(config: DatasetConfig, mode: MappingMode) -> None:
             print(f"  {col.name}: MAP<{col.key.physicalType.value if col.key else '?'},"
                   f"{col.value.physicalType.value if col.value else '?'}>"
                   f" -> MAP<{key_t},{val_t}> (complexField)")
+        elif kind == _FieldKind.GEOSPATIAL:
+            print(f"  {col.name}: {col.logicalType.value} -> BYTES (geospatial, H3)")
 
     print()

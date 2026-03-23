@@ -177,6 +177,18 @@
       "repetition": "OPTIONAL"
     },
     {
+      "name": "col_geometry",
+      "physicalType": "BINARY",
+      "logicalType": "GEOMETRY",
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "col_geography",
+      "physicalType": "BINARY",
+      "logicalType": "GEOGRAPHY",
+      "repetition": "OPTIONAL"
+    },
+    {
       "name": "ingestion_timestamp",
       "physicalType": "INT64",
       "logicalType": "TIMESTAMP_MILLIS",
