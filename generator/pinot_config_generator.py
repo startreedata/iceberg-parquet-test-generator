@@ -24,6 +24,7 @@ from .config_model import (
     DatasetConfig,
     LogicalType,
     PhysicalType,
+    Repetition,
 )
 
 
@@ -136,8 +137,11 @@ def _classify_column(col: ColumnConfig, mode: MappingMode) -> _FieldKind:
         return _FieldKind.JSON
 
     if col.physicalType == PhysicalType.LIST:
-        if mode == MappingMode.ICEBERG and col.element and _is_primitive_element(col.element):
-            return _FieldKind.DIMENSION_MV
+        if col.element and _is_primitive_element(col.element):
+            if mode == MappingMode.ICEBERG:
+                return _FieldKind.DIMENSION_MV
+            if col.element.repetition == Repetition.REQUIRED:
+                return _FieldKind.DIMENSION_MV
         return _FieldKind.JSON
 
     if col.physicalType == PhysicalType.MAP:

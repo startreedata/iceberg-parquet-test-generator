@@ -36,6 +36,7 @@ configs/                       Pre-built JSON configs
   all-primitive-types.json     All 8 physical types without logical annotations
   all-logical-types.json       All logical type combinations
   all-complex-types.json       STRUCT, MAP, LIST, nested combinations
+  multi-value-types.json       Multi-value (MV) primitive columns (LIST<primitive>)
   iceberg-full-coverage.json   Types as Iceberg would actually produce them
   null-scenarios.json          NULL edge-case scenarios
   golden-dataset-extended.json Superset of the original golden_schema
@@ -115,6 +116,10 @@ DATE, TIME(ms/us/ns), TIMESTAMP(ms/us/ns, UTC/local), DECIMAL
 ### Complex Types
 STRUCT, LIST, MAP (including nested combinations)
 
+### Multi-Value Types
+LIST\<INT32\>, LIST\<INT64\>, LIST\<FLOAT\>, LIST\<DOUBLE\>, LIST\<STRING\>
+(Parquet LIST with primitive elements → Pinot multi-value dimensions)
+
 ## Generating Pinot Schema & Table Config
 
 Automatically generate Pinot schema and table config JSON files from the same config used for Parquet generation:
@@ -147,7 +152,8 @@ StarTree Pinot has **two separate code paths** that map Parquet types to Pinot t
 |---|---|
 | DECIMAL | BIG_DECIMAL |
 | JSON logical type | STRING |
-| LIST (any) | STRING (JSON serialized) |
+| LIST\<primitive\> | Multi-value dimension (same primitive type) |
+| LIST (nested/complex) | STRING (JSON serialized) |
 | MAP (any) | STRING (JSON serialized) |
 | STRUCT | STRING (JSON serialized) |
 

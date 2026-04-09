@@ -94,6 +94,24 @@ Phase 1 functional testing of all Parquet data types supported by Pinot via raw 
 | 2.26 | col_decimal_fixed | FIXED + DECIMAL(28,6) | BIG_DECIMAL | `SELECT col_decimal_fixed FROM all_logical_types WHERE col_decimal_fixed IS NOT NULL LIMIT 5` | Decimal values with scale=6 |
 | 2.27 | col_decimal_binary | BINARY + DECIMAL(38,10) | BIG_DECIMAL | `SELECT col_decimal_binary FROM all_logical_types WHERE col_decimal_binary IS NOT NULL LIMIT 5` | Decimal values with scale=10 |
 
+### 2E: Geospatial Types
+
+| # | Column | Parquet Logical | Pinot Type | Validation Query | Pass Criteria |
+|---|--------|----------------|------------|-----------------|---------------|
+| 2.28 | col_geometry | GEOMETRY (WKB) | BYTES | `SELECT ST_AsText(col_geometry) FROM all_logical_types WHERE col_geometry IS NOT NULL LIMIT 5` | WKT point strings like `POINT (lon lat)` |
+| 2.29 | col_geography | GEOGRAPHY (WKB) | BYTES | `SELECT ST_AsText(col_geography) FROM all_logical_types WHERE col_geography IS NOT NULL LIMIT 5` | WKT point strings with valid lon/lat |
+
+**Transform check:** The schema uses `transformFunction: "ST_GeomFromWKB(col_geometry)"` and `ST_GeogFromWKB(col_geography)` to convert WKB bytes during ingestion.
+
+**Spatial query check:**
+```sql
+SELECT ST_Distance(col_geography, ST_GeogFromText('POINT (-73.9857 40.7484)'))
+FROM all_logical_types
+WHERE col_geography IS NOT NULL
+LIMIT 5
+-- Expected: distance values in meters
+```
+
 ---
 
 ## Test 3: Complex Types
@@ -223,7 +241,55 @@ This config mirrors the exact types Iceberg produces. Key validations:
 
 ---
 
-## Test 6: Golden Dataset (All-in-One)
+## Test 6: Multi-Value Primitive Types
+
+**Config:** `multi-value-types.json`
+**Files:** `multi_value_types.parquet`, `multi_value_types_pinot_schema.json`, `multi_value_types_pinot_table_config.json`
+**Rows:** 100,000
+
+Multi-value (MV) columns store arrays of primitives per row. In Parquet these are LIST\<primitive\> columns; Pinot maps them to multi-value dimensions (`singleValueField: false`).
+
+### 6A: Optional MV Columns (~10% null rows)
+
+| # | Column | Parquet Type | Pinot Type (MV) | Validation Query | Pass Criteria |
+|---|--------|-------------|-----------------|-----------------|---------------|
+| 6.1 | mv_int | LIST\<INT32\> | INT (MV) | `SELECT mv_int FROM multi_value_types WHERE mv_int IS NOT NULL LIMIT 5` | Arrays of integers |
+| 6.2 | mv_long | LIST\<INT64\> | LONG (MV) | `SELECT mv_long FROM multi_value_types WHERE mv_long IS NOT NULL LIMIT 5` | Arrays of longs |
+| 6.3 | mv_float | LIST\<FLOAT\> | FLOAT (MV) | `SELECT mv_float FROM multi_value_types WHERE mv_float IS NOT NULL LIMIT 5` | Arrays of floats |
+| 6.4 | mv_double | LIST\<DOUBLE\> | DOUBLE (MV) | `SELECT mv_double FROM multi_value_types WHERE mv_double IS NOT NULL LIMIT 5` | Arrays of doubles |
+| 6.5 | mv_string | LIST\<STRING\> | STRING (MV) | `SELECT mv_string FROM multi_value_types WHERE mv_string IS NOT NULL LIMIT 5` | Arrays of strings |
+
+**Null check for optional MV columns:**
+```sql
+SELECT COUNT(*) FROM multi_value_types WHERE mv_int IS NULL
+-- Expected: ~10,000 nulls
+
+SELECT COUNT(*) FROM multi_value_types WHERE mv_long IS NULL
+-- Expected: ~10,000 nulls
+```
+
+### 6B: Required MV Columns (Zero null rows)
+
+| # | Column | Parquet Type | Pinot Type (MV) | Validation Query | Pass Criteria |
+|---|--------|-------------|-----------------|-----------------|---------------|
+| 6.6 | mv_int_required | LIST\<INT32\> (REQUIRED) | INT (MV) | `SELECT COUNT(*) FROM multi_value_types WHERE mv_int_required IS NULL` | 0 nulls |
+| 6.7 | mv_string_required | LIST\<STRING\> (REQUIRED) | STRING (MV) | `SELECT COUNT(*) FROM multi_value_types WHERE mv_string_required IS NULL` | 0 nulls |
+| 6.8 | mv_long_required | LIST\<INT64\> (REQUIRED) | LONG (MV) | `SELECT COUNT(*) FROM multi_value_types WHERE mv_long_required IS NULL` | 0 nulls |
+
+### 6C: MV-Specific Query Patterns
+
+| # | Test | Query | Pass Criteria |
+|---|------|-------|---------------|
+| 6.9 | MV array length | `SELECT ARRAYLENGTH(mv_int) FROM multi_value_types WHERE mv_int IS NOT NULL LIMIT 10` | Returns integer lengths (0–5) |
+| 6.10 | MV value lookup | `SELECT mv_string FROM multi_value_types WHERE mv_string = 'some_value' LIMIT 5` | Pinot searches within arrays (MV semantics) |
+| 6.11 | MV aggregation | `SELECT SUMMV(mv_int) FROM multi_value_types WHERE mv_int IS NOT NULL LIMIT 10` | Sum of array elements per row |
+| 6.12 | MV unnest | `SELECT mv_int FROM multi_value_types WHERE mv_int IS NOT NULL ORDER BY mv_int LIMIT 10` | MV columns participate in ORDER BY |
+
+**Global check:** `SELECT COUNT(*) FROM multi_value_types` → 100,000
+
+---
+
+## Test 7: Golden Dataset (All-in-One)
 
 **Config:** `golden-dataset-extended.json`
 **Files:** `golden_dataset_extended.parquet`, `golden_dataset_extended_pinot_schema.json`, `golden_dataset_extended_pinot_table_config.json`
@@ -251,7 +317,8 @@ SELECT * FROM golden_dataset_extended LIMIT 5
 | 3. Complex Types | all-complex-types.json | [ ] | [ ] | [ ] | |
 | 4. Null Handling | null-scenarios.json | [ ] | [ ] | [ ] | |
 | 5. Iceberg Coverage | iceberg-full-coverage.json | [ ] | [ ] | [ ] | |
-| 6. Golden Dataset | golden-dataset-extended.json | [ ] | [ ] | [ ] | |
+| 6. Multi-Value Types | multi-value-types.json | [ ] | [ ] | [ ] | |
+| 7. Golden Dataset | golden-dataset-extended.json | [ ] | [ ] | [ ] | |
 
 ---
 
@@ -263,3 +330,5 @@ SELECT * FROM golden_dataset_extended LIMIT 5
 4. **Sentinel collision (Test 4C)** — With `enableColumnBasedNullHandling: true` (our default), sentinel values should be preserved as real data. If they're treated as null, column-based null handling is not working.
 5. **Complex types as JSON** — All STRUCT/LIST/MAP become JSON strings. JSON_EXTRACT_SCALAR queries should work if JSON indexing is enabled (our table configs enable it).
 6. **DECIMAL as BIG_DECIMAL** — This depends on the upcoming ParquetToPinotTypeMapper change. If the change isn't deployed yet, DECIMAL columns may fail or map to STRING instead.
+7. **MV empty arrays** — The generator produces arrays with 0–5 elements. Empty arrays (length 0) account for ~17% of non-null rows. Pinot should handle empty MV arrays gracefully, but some MV functions (like `SUMMV`, `MINMV`, `MAXMV`) may behave unexpectedly on empty arrays.
+8. **MV null semantics** — Pinot distinguishes between a null MV column and an empty array. OPTIONAL columns will have ~10% null rows (no array at all), while non-null rows may still contain empty arrays (zero elements).

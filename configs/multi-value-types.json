@@ -1,0 +1,69 @@
+{
+  "name": "multi_value_types",
+  "numRows": 100000,
+  "seed": 42,
+  "defaultNullRatio": 0.1,
+  "columns": [
+    {
+      "name": "mv_int",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "INT32", "repetition": "REQUIRED" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "mv_long",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "INT64", "repetition": "REQUIRED" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "mv_float",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "FLOAT", "repetition": "REQUIRED" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "mv_double",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "DOUBLE", "repetition": "REQUIRED" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "mv_string",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+      "repetition": "OPTIONAL"
+    },
+    {
+      "name": "mv_int_required",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "INT32", "repetition": "REQUIRED" },
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "mv_string_required",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "BINARY", "logicalType": "STRING", "repetition": "REQUIRED" },
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "mv_long_required",
+      "physicalType": "LIST",
+      "element": { "name": "element", "physicalType": "INT64", "repetition": "REQUIRED" },
+      "repetition": "REQUIRED"
+    },
+    {
+      "name": "ingestion_timestamp",
+      "physicalType": "INT64",
+      "logicalType": "TIMESTAMP_MILLIS",
+      "logicalTypeParams": { "is_adjusted_to_utc": true },
+      "repetition": "REQUIRED"
+    }
+  ],
+  "writerOptions": {
+    "compression": "SNAPPY",
+    "useDictionary": true,
+    "writeStatistics": true,
+    "useDeprecatedInt96Timestamps": false
+  }
+}

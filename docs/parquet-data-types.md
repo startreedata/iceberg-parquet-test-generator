@@ -342,11 +342,11 @@ The type mapping differs depending on which ingestion path is used:
 | DECIMAL | BIG_DECIMAL | BIG_DECIMAL |
 | DATE | LONG | INT |
 | JSON logical type | STRING | JSON |
-| LIST of primitives | STRING (JSON) | Multi-value column |
+| LIST of primitives | Multi-value column | Multi-value column |
 | Simple MAP | STRING (JSON) | ComplexFieldSpec with MAP |
 | STRUCT | STRING (JSON) | DimensionFieldSpec with JSON |
 
-The `ParquetToPinotTypeMapper.mapComplexType()` treats **all** complex types (LIST, MAP, STRUCT) as STRING, relying on JSON serialization. The `IcebergSchemaConverter` is more granular -- it distinguishes LIST-of-primitives (MV columns) and simple MAPs (`ComplexFieldSpec`) from nested structures (JSON).
+Both ingestion paths map LIST-of-primitives to **multi-value columns**. The schema generator interprets the element type to produce a `DimensionFieldSpec` with `singleValueField: false`. `ParquetToPinotTypeMapper.mapComplexType()` returns STRING as a base type, but the schema generator overrides this for LIST\<primitive\> to create MV dimensions. Nested/complex LIST elements still serialize to JSON STRING.
 
 ### 8.3 Known Gaps and Caveats
 
@@ -361,3 +361,76 @@ The `ParquetToPinotTypeMapper.mapComplexType()` treats **all** complex types (LI
 5. **Timestamp precision mismatch.** Iceberg defaults to microsecond precision; Pinot TIMESTAMP stores milliseconds internally. Nanosecond timestamps lose precision.
 
 6. **UTC vs local timestamps.** Pinot treats `isAdjustedToUTC=true` and `false` identically (both become TIMESTAMP), losing timezone semantics.
+
+---
+
+## 9. Multi-Value (MV) Columns
+
+### 9.1 What Are MV Columns?
+
+Pinot multi-value columns store arrays of primitive values per row. In Parquet, these are represented as `LIST<primitive>` (3-level encoding). The schema generator produces a `DimensionFieldSpec` with `singleValueField: false`.
+
+### 9.2 Supported MV Element Types
+
+| Parquet LIST Element | Pinot MV DataType | Notes |
+|---|---|---|
+| LIST\<INT32\> | INT (MV) | Signed 32-bit integers |
+| LIST\<INT64\> | LONG (MV) | Signed 64-bit integers |
+| LIST\<FLOAT\> | FLOAT (MV) | Single-precision floats |
+| LIST\<DOUBLE\> | DOUBLE (MV) | Double-precision floats |
+| LIST\<STRING\> | STRING (MV) | UTF-8 strings |
+
+### 9.3 MV Schema Configuration
+
+Pinot schema for an MV column:
+
+```json
+{
+  "name": "mv_int",
+  "dataType": "INT",
+  "singleValueField": false,
+  "maxLength": 512,
+  "notNull": false
+}
+```
+
+Key fields:
+- `singleValueField: false` — marks this as multi-value
+- `maxLength: 512` — default max bytes for MV storage
+- `notNull` — controls whether the entire MV column can be null (array-level nullability)
+
+### 9.4 MV Query Patterns
+
+```sql
+-- Array length
+SELECT ARRAYLENGTH(mv_int) FROM table LIMIT 10
+
+-- MV aggregation functions
+SELECT SUMMV(mv_int), MINMV(mv_int), MAXMV(mv_int) FROM table LIMIT 10
+SELECT AVGMV(mv_double) FROM table LIMIT 10
+
+-- MV value matching (searches within arrays)
+SELECT mv_string FROM table WHERE mv_string = 'target_value'
+
+-- MV in GROUP BY (unnests)
+SELECT mv_string, COUNT(*) FROM table GROUP BY mv_string
+
+-- Count distinct across MV
+SELECT COUNTMV(mv_int) FROM table LIMIT 10
+```
+
+### 9.5 MV vs JSON for Lists
+
+| Aspect | MV Column (`singleValueField: false`) | JSON Column |
+|---|---|---|
+| Element type | Single primitive type | Any (mixed types, nested objects) |
+| Query syntax | Direct column reference, MV functions | `JSON_EXTRACT_SCALAR`, `JSON_MATCH` |
+| Indexing | Inverted index on individual elements | JSON index on paths |
+| Performance | Optimized for primitive array operations | General-purpose, slower for simple arrays |
+| Null semantics | Null = no array; empty = zero elements | Null = no value; `[]` = empty JSON array |
+
+### 9.6 Edge Cases
+
+1. **Empty arrays** — A non-null MV column can have zero elements. The generator produces arrays with 0–5 elements; ~17% of non-null rows are empty arrays.
+2. **Null vs empty** — OPTIONAL MV columns distinguish between null (no array at all, ~10% of rows) and empty arrays (array exists but has zero elements).
+3. **Element nulls** — Within a non-null array, individual elements are always non-null in MV columns (Pinot MV does not support per-element nulls). The generator config uses `REQUIRED` elements to match this.
